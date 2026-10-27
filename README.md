@@ -26,9 +26,51 @@ Users can receive personalized event recommendations based on their saved prefer
 ![Cincy Events Storyboard](Cincy_Events_Storyboard.png)
 
 ## Requirements
+#### Requirement 1: Search for Events
+###### Scenario
+As a user who is interested in sports, I want to be able to search sporting events on any name related to the topic: sports, team names, sport names, etc
+###### Dependencies
+Recent or upcoming sport events search data should be available and accessible
+###### Assumptions
+Search results should be events that has not happened yet
+###### Examples
+1.1
+**Given** an upcoming hockey game is available
+**When** I search for "Cincinnati Cyclones"
+**Then** I should receive at least one result with these attributes:
 
+Event: Cincinnati Cyclones
+Date: Nov 25
+Time: 7:05 PM
+Location: Heritage Bank Center
+
+1.2 
+**Given** an upcoming football game is available
+**When** I search for "Cincinnati Bearcats"
+**Then** I should receive at least one result with these attributes:
+
+Event: Cincinnati Bearcats Football
+Date: Nov 21
+Time: 12:00 PM
+Location: Nippert Stadium
+
+1.3
+**Given** an upcoming baseball game is available
+**When** I search for "Reds"
+**Then** I should receive at least one result with these attributes:
+
+Event: Cincinnati Reds
+Date: Apr 13
+Time: TBD
+Location: Great American Ball Park
+
+2. Requirement 2
+3. Requirement 3
+4. Requirement 4
 ## Data sources
 
 ## Database
 
 ## Team Composition
+- **Team Member:** Taylor Johnson, Noah Owens, Hayden Phan, Angel Paz
+- **Meeting Time:** Mondays 2PM-4PM (In person/Teams)
