@@ -203,7 +203,7 @@ This source provides:
 - Dates and times
 - Venue information
 - Descriptions
-- 
+  
 ### 4.Ticketmaster Discovery API
 
 Source: [https://developer.ticketmaster.com/products-and-docs/apis/discovery-api/v2/](https://developer.ticketmaster.com/products-and-docs/apis/discovery-api/v2/)
