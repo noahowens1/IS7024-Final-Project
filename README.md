@@ -203,8 +203,20 @@ This source provides:
 - Dates and times
 - Venue information
 - Descriptions
+- 
+### 4.Ticketmaster Discovery API
 
+Source: [https://developer.ticketmaster.com/products-and-docs/apis/discovery-api/v2/](https://developer.ticketmaster.com/products-and-docs/apis/discovery-api/v2/)
 
+Ticketmaster provides a RESTful API containing information about upcoming concerts, sporting events, comedy shows, and other entertainment activities. This data source provides:
+
+- Event titles
+- Dates and times
+- Categories (music, sports, theater, comedy, etc.)
+- Venue names and locations
+- Event descriptions
+- Ticket prices (when available)
+- Ticket purchasing links
 
 ## Database
 ![Cincy Events ERD](CincyEventsErd.png)
