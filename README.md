@@ -19,7 +19,7 @@ Users can receive personalized event recommendations based on their saved prefer
 
 ## Application Logo
 
-![Cincy Events Logo](CincyEventsLogo.jpeg)
+![Cincy Events Logo](CincyEventsLogo.jpg)
 
 ## Storyboard
 
