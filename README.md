@@ -117,7 +117,59 @@ Events have sufficient data, users use meaningful search terms, and location mat
 **When** the system finds five events with "concert" in the title or description
 **Then** all five events should appear in the results
 
-5. Requirement 4
+#### Requirement 4: Save Events for Later
+
+###### Scenario
+As a user, I want to save events that interest me so that I can easily find them later without having to search for them again.
+
+###### Dependencies
+Event information must be available from the application's data sources, and the database must store saved events associated with a user.
+
+###### Assumptions
+Users must be logged in to save events.
+Saved events should remain accessible when users return to the application.
+
+###### Examples
+
+4.1
+
+**Given** I am logged into my account and an upcoming Cincinnati Cyclones game on November 25 is displayed in my search results
+
+**When** I click the "Save Event" button
+
+**Then** the Cincinnati Cyclones game should be added to my saved events list and display a confirmation message saying "Event Saved."
+
+4.2
+
+**Given** I previously saved the Cincinnati Cyclones game on November 25
+
+**When** I navigate to the "Saved Events" page
+
+**Then** I should see the Cincinnati Cyclones game listed with its date, time, location, and available ticket price.
+
+4.3
+
+**Given** I have already saved the Cincinnati Cyclones game on November 25
+
+**When** I attempt to save the same event again
+
+**Then** the application should prevent a duplicate entry and display a message saying "This event is already saved."
+
+4.4
+
+**Given** the Cincinnati Cyclones game on November 25 is currently in my saved events list
+
+**When** I click the "Remove" button
+
+**Then** the event should disappear from my saved events list without affecting other saved events.
+
+4.5
+
+**Given** I am browsing events without being logged into an account
+
+**When** I click the "Save Event" button
+
+**Then** the application should redirect me to the login page without saving the event.
 
 ## Data sources
 Cincy Events integrates multiple real‑world Cincinnati event feeds to provide accurate, up‑to‑date information. This feed will be used through a JSON parser to populate our event listings.
