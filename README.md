@@ -24,3 +24,11 @@ Users can receive personalized event recommendations based on their saved prefer
 ## Storyboard
 
 ![Cincy Events Storyboard](Cincy_Events_Storyboard.png)
+
+## Requirements
+
+## Data sources
+
+## Database
+
+## Team Composition
