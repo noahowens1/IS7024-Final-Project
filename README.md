@@ -28,11 +28,11 @@ Users can receive personalized event recommendations based on their saved prefer
 ## Requirements
 #### Requirement 1: Search for Events
 ###### Scenario
-As a user who is interested in sports, I want to be able to search sporting events on any name related to the topic: sports, team names, sport names, etc
+As a user who is interested in sports, I want to be able to search sporting events on any name related to the topic: sports, team names, sport names, etc.
 ###### Dependencies
-Recent or upcoming sport events search data should be available and accessible
+Recent or upcoming sport events search data should be available and accessible.
 ###### Assumptions
-Search results should be events that has not happened yet
+Search results should be events that has not happened yet.
 ###### Examples
 1.1
 **Given** an upcoming hockey game is available
@@ -43,6 +43,7 @@ Event: Cincinnati Cyclones
 Date: Nov 25
 Time: 7:05 PM
 Location: Heritage Bank Center
+Ticket: $38+
 
 1.2 
 **Given** an upcoming football game is available
@@ -53,6 +54,7 @@ Event: Cincinnati Bearcats Football
 Date: Nov 21
 Time: 12:00 PM
 Location: Nippert Stadium
+Ticket: $47+
 
 1.3
 **Given** an upcoming baseball game is available
@@ -63,8 +65,39 @@ Event: Cincinnati Reds
 Date: Apr 13
 Time: TBD
 Location: Great American Ball Park
+Ticket: $181+
 
-2. Requirement 2
+#### Requirement 2: Filter Events by Budget
+###### Scenario
+As a user who is finding events to attend based on budget, I want to be able to search for different events with the filter function including options like <$50, $50-100, or >$100, etc.
+###### Dependencies
+Recent or upcoming events search data should be available and accessible with the respective filtered price.
+###### Assumptions
+Search results should be events that has not happened yet.
+CUrrency should be in USD.
+###### Examples
+1.1
+**Given** a festival that does not require ticket is available
+**When** I filter events with pricing "<$50"
+**Then** I should receive at least one result with these attributes:
+
+Event: The 2026 Cincinnati SantaCon
+Date: Dec 12 
+Time: 12:00 PM
+Location: Downtown Cincinnati, OTR, Mt.Adams, Covington, Newport, and Factory 52
+Ticket: Free
+
+1.2 
+**Given** an upcoming event with the ticket price greater than $100 is available
+**When** I filter events with pricing ">$100"
+**Then** I should receive at least one result with these attributes:
+
+Event: Haunted Fest
+Date: Oct 31
+Time: 7:00 PM
+Location: MegaCorp Pavillon
+Ticket: $110+
+
 3. Requirement 3
 4. Requirement 4
 ## Data sources
