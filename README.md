@@ -16,3 +16,7 @@ Users can receive personalized event recommendations based on their saved prefer
 - **Event Details:** View event dates, venues, descriptions, available pricing, and ticket links.
 - **Saved Events:** Bookmark events for future planning.
 - **Weather Information:** View available weather forecasts when planning outdoor activities.
+
+## Storyboard
+
+![Cincy Events Storyboard](Cincy_Events_Storyboard.png)
