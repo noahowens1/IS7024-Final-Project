@@ -107,12 +107,12 @@ Events should be up to date, and categories should be consistent.
 ###### Assumptions: 
 Events have sufficient data, users use meaningful search terms, and location matching is flexible.
 ###### Examples:
-1.1 
-**Given** The database tags events as "sports", "arts", and "music". 
+3.1 
+**Given** the database tags events as "sports", "arts", and "music". 
 **When** I filter by "arts"
 **Then** I should only receive events tagged with "arts"
 
-1.2 
+3.2 
 **Given** I search for "concerts"
 **When** the system finds five events with "concert" in the title or description
 **Then** all five events should appear in the results
@@ -120,7 +120,7 @@ Events have sufficient data, users use meaningful search terms, and location mat
 5. Requirement 4
 
 ## Data sources
-Cincy Events integrates multiple real‑world Cincinnati event feeds to provide accurate, up‑to‑date information.
+Cincy Events integrates multiple real‑world Cincinnati event feeds to provide accurate, up‑to‑date information. This feed will be used through a JSON parser to populate our event listings.
 ### 1. Washington Park Events Feed
 Source: https://washingtonpark.org/events  
 Washington Park maintains an active events archive and upcoming events calendar. This data source provides:
@@ -130,30 +130,33 @@ Washington Park maintains an active events archive and upcoming events calendar.
 - Venue details
 - Event descriptions
 - Pricing or registration information
-This feed will be used through a JSON parser to populate our event listings.
+
 ### 2. Fountain Square Events Feed
 Source: https://myfountainsquare.com/events  
-Fountain Square hosts concerts, festivals, skating events, and seasonal activities. Their events feed provides:
+Fountain Square hosts concerts, festivals, skating events, and seasonal activities. This data will be merged with Washington Park’s feed to create a unified event catalog.
+Their events feed provides:
 - Event names
 - Dates and schedules
 - Event categories
 - Venue and location details
 - Ticket or registration links
 - Descriptions and promotional details
-This data will be merged with Washington Park’s feed to create a unified event catalog.
+
 ### 3. Cincinnati CityBeat Events
 Source: https://www.citybeat.com/events  
-CityBeat offers a broader set of local events across Cincinnati, including arts, nightlife, food, and community activities. 
+CityBeat offers a broader set of local events across Cincinnati, including arts, nightlife, food, and community activities. This feed expands the variety of events available to users beyond the major venue calendars.
 This source provides:
 - Event titles
 - Categories
 - Dates and times
 - Venue information
 - Descriptions
-This feed expands the variety of events available to users beyond the major venue calendars.
+
 
 
 ## Database
+![Cincy Events ERD](CincyEventsERD.png)
+
 
 ## Team Composition
 - **Team Member:** Taylor Johnson, Noah Owens, Hayden Phan, Angel Paz
