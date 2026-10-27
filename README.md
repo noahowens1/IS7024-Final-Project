@@ -155,7 +155,7 @@ This source provides:
 
 
 ## Database
-![Cincy Events ERD](CincyEventsERD.png)
+![Cincy Events ERD](CincyEventsErd.png)
 
 
 ## Team Composition
