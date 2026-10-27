@@ -17,6 +17,10 @@ Users can receive personalized event recommendations based on their saved prefer
 - **Saved Events:** Bookmark events for future planning.
 - **Weather Information:** View available weather forecasts when planning outdoor activities.
 
+## Application Logo
+
+![Cincy Events Logo](CincyEventsLogo.jpeg)
+
 ## Storyboard
 
 ![Cincy Events Storyboard](Cincy_Events_Storyboard.png)
