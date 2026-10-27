@@ -39,33 +39,33 @@ Search results should be events that has not happened yet.
 **When** I search for "Cincinnati Cyclones"
 **Then** I should receive at least one result with these attributes:
 
-Event: Cincinnati Cyclones
-Date: Nov 25
-Time: 7:05 PM
-Location: Heritage Bank Center
-Ticket: $38+
+<p>Event: Cincinnati Cyclones</p> 
+<p>Date: Nov 25</p>
+<p>Time: 7:05 PM</p>
+<p>Location: Heritage Bank Center</p>
+<p>Ticket: $38+</p>
 
 1.2 
 **Given** an upcoming football game is available
 **When** I search for "Cincinnati Bearcats"
 **Then** I should receive at least one result with these attributes:
 
-Event: Cincinnati Bearcats Football
-Date: Nov 21
-Time: 12:00 PM
-Location: Nippert Stadium
-Ticket: $47+
+<p>Event: Cincinnati Bearcats Football</p>
+<p>Date: Nov 21</p>
+<p>Time: 12:00 PM</p>
+<p>Location: Nippert Stadium</p>
+<p>Ticket: $47+</p>
 
 1.3
 **Given** an upcoming baseball game is available
 **When** I search for "Reds"
 **Then** I should receive at least one result with these attributes:
 
-Event: Cincinnati Reds
-Date: Apr 13
-Time: TBD
-Location: Great American Ball Park
-Ticket: $181+
+<p>Event: Cincinnati Reds</p>
+<p>Date: Apr 13</p>
+<p>Time: TBD</p>
+<p>Location: Great American Ball Park</p>
+<p>Ticket: $181+</p>
 
 #### Requirement 2: Filter Events by Budget
 ###### Scenario
@@ -76,27 +76,27 @@ Recent or upcoming events search data should be available and accessible with th
 Search results should be events that has not happened yet.
 CUrrency should be in USD.
 ###### Examples
-1.1
+2.1
 **Given** a festival that does not require ticket is available
 **When** I filter events with pricing "<$50"
 **Then** I should receive at least one result with these attributes:
 
-Event: The 2026 Cincinnati SantaCon
-Date: Dec 12 
-Time: 12:00 PM
-Location: Downtown Cincinnati, OTR, Mt.Adams, Covington, Newport, and Factory 52
-Ticket: Free
+<p>Event: The 2026 Cincinnati SantaCon</p>
+<p>Date: Dec 12</p>
+<p>Time: 12:00 PM</p>
+<p>Location: Downtown Cincinnati, OTR, Mt.Adams, Covington, Newport, and Factory 52</p>
+<p>Ticket: Free</p>
 
-1.2 
+2.2 
 **Given** an upcoming event with the ticket price greater than $100 is available
 **When** I filter events with pricing ">$100"
 **Then** I should receive at least one result with these attributes:
 
-Event: Haunted Fest
-Date: Oct 31
-Time: 7:00 PM
-Location: MegaCorp Pavillon
-Ticket: $110+
+<p>Event: Haunted Fest</p>
+<p>Date: Oct 31</p>
+<p>Time: 7:00 PM</p>
+<p>Location: MegaCorp Pavillon</p>
+<p>Ticket: $110+</p>
 
 3. Requirement 3
 4. Requirement 4
