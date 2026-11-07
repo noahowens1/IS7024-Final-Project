@@ -1,0 +1,65 @@
+@page
+@model CincyEvents.Pages.SavedEvents.IndexModel
+@{
+    ViewData["Title"] = "Saved Events";
+}
+
+<h1>Saved Events</h1>
+
+@if (!string.IsNullOrEmpty(Model.StatusMessage))
+{
+    <div class="alert alert-info" role="status" aria-live="polite">@Model.StatusMessage</div>
+}
+
+@if (Model.SavedEvents.Count == 0)
+{
+    <p>You haven't saved any events yet. <a asp-page="/Events/Index">Browse upcoming events</a>.</p>
+}
+else
+{
+    <div class="row g-3">
+        @foreach (var savedEvent in Model.SavedEvents)
+        {
+            <div class="col-12 col-md-6">
+                <article class="card h-100">
+                    <div class="card-body">
+                        <h2 class="h5 card-title">@savedEvent.Title</h2>
+                        @if (savedEvent.IsSample)
+                        {
+                            <span class="badge bg-warning text-dark">Sample event - not live event information</span>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(savedEvent.Category))
+                        {
+                            <p class="card-text mt-2">@savedEvent.Category</p>
+                        }
+                        <p class="card-text">
+                            @CincyEvents.Services.EventTimeFormatter.Format(savedEvent.StartAtUtc, savedEvent.TimeZoneId)
+                            @if (!string.IsNullOrWhiteSpace(savedEvent.Venue))
+                            {
+                                <span> · @savedEvent.Venue</span>
+                            }
+                        </p>
+                        <p class="card-text">@FormatPrice(savedEvent)</p>
+                        <form method="post" asp-page-handler="Remove" asp-route-savedEventId="@savedEvent.SavedEventId">
+                            <button type="submit" class="btn btn-outline-danger">Remove @savedEvent.Title</button>
+                        </form>
+                    </div>
+                </article>
+            </div>
+        }
+    </div>
+}
+
+@functions {
+    private static string FormatPrice(CincyEvents.Services.SavedEventDetails savedEvent)
+    {
+        if (savedEvent.PriceMin is null)
+        {
+            return "Price unavailable";
+        }
+
+        return savedEvent.PriceMax is null || savedEvent.PriceMax == savedEvent.PriceMin
+            ? $"{savedEvent.PriceMin:C}"
+            : $"{savedEvent.PriceMin:C} - {savedEvent.PriceMax:C}";
+    }
+}
