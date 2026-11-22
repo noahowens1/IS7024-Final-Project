@@ -1,0 +1,71 @@
+@page
+@model CincyEvents.Pages.Chat.IndexModel
+@using System.Text.Json
+@{
+    ViewData["Title"] = $"Chat - {Model.Event.Name}";
+    var recipientId = ViewData["RecipientId"] as string;
+}
+
+<h1>@Model.Event.Name chat</h1>
+<div class="mb-3">
+    <label class="form-label" for="chatType">Conversation</label>
+    <select class="form-select" id="chatType" onchange="changeConversation(this.value)">
+        <option value="">Event group chat</option>
+        @foreach (var participant in Model.Participants)
+        {
+            <option value="@participant.Id" selected="@(participant.Id == recipientId)">Message @participant.Name</option>
+        }
+    </select>
+</div>
+
+<div id="messages" class="border rounded p-3 mb-3" style="min-height: 260px; max-height: 420px; overflow-y: auto;">
+    @foreach (var message in Model.Messages)
+    {
+        <p><strong>@(message.Sender.DisplayName ?? message.Sender.Email):</strong> @message.Content <small class="text-muted">(@message.SentAt.ToLocalTime().ToShortTimeString())</small></p>
+    }
+</div>
+<form id="messageForm">
+    <div class="input-group">
+        <input id="messageInput" class="form-control" maxlength="2000" placeholder="Write a message..." autocomplete="off" required />
+        <button class="btn btn-primary" type="submit">Send</button>
+    </div>
+</form>
+<div id="chatError" class="text-danger mt-2" role="alert"></div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@8.0.19/dist/browser/signalr.min.js"></script>
+    <script>
+        const eventId = @Model.Event.Id;
+        const currentUserId = @Html.Raw(JsonSerializer.Serialize(Model.CurrentUserId));
+        const connection = new signalR.HubConnectionBuilder().withUrl('/hubs/chat').withAutomaticReconnect().build();
+        const messages = document.getElementById('messages');
+        const input = document.getElementById('messageInput');
+        const recipient = () => document.getElementById('chatType').value || null;
+
+        connection.on('ReceiveMessage', (senderId, senderName, content, sentAt) => {
+            const item = document.createElement('p');
+            const sender = document.createElement('strong');
+            sender.textContent = `${senderId === currentUserId ? 'You' : senderName}: `;
+            item.append(sender, document.createTextNode(content));
+            messages.appendChild(item);
+            messages.scrollTop = messages.scrollHeight;
+        });
+
+        document.getElementById('messageForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            if (!input.value.trim()) return;
+            try {
+                await connection.invoke('SendMessage', eventId, recipient(), input.value);
+                input.value = '';
+            } catch (error) {
+                document.getElementById('chatError').textContent = error.message;
+            }
+        });
+
+        connection.start().then(() => connection.invoke('JoinEventChat', eventId));
+        function changeConversation(userId) {
+            const query = userId ? `&recipientId=${encodeURIComponent(userId)}` : '';
+            window.location = `/Chat?eventId=${eventId}${query}`;
+        }
+    </script>
+}
