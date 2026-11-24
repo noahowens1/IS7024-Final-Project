@@ -12,6 +12,32 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
     options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Events.OnRedirectToLogin = context =>
+    {
+        if (context.Request.Path.StartsWithSegments("/hubs"))
+        {
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            return Task.CompletedTask;
+        }
+
+        context.Response.Redirect(context.RedirectUri);
+        return Task.CompletedTask;
+    };
+
+    options.Events.OnRedirectToAccessDenied = context =>
+    {
+        if (context.Request.Path.StartsWithSegments("/hubs"))
+        {
+            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            return Task.CompletedTask;
+        }
+
+        context.Response.Redirect(context.RedirectUri);
+        return Task.CompletedTask;
+    };
+});
 builder.Services.AddSignalR();
 builder.Services.AddRazorPages();
 
@@ -22,16 +48,30 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     db.Database.EnsureCreated();
 
-    if (!db.Events.Any())
+    var sampleEvents = new[]
     {
-        db.Events.Add(new Event
+        new Event
         {
             Name = "Cincy Events Community Meetup",
             Description = "Join this event to try the real-time event chat.",
             StartsAt = DateTime.UtcNow.AddDays(7)
-        });
-        db.SaveChanges();
+        },
+        new Event
+        {
+            Name = "Cincinnati Food Truck Festival",
+            Description = "Connect with other attendees and share your favorite food trucks.",
+            StartsAt = DateTime.UtcNow.AddDays(14)
+        }
+    };
+
+    foreach (var sampleEvent in sampleEvents)
+    {
+        if (!db.Events.Any(eventItem => eventItem.Name == sampleEvent.Name))
+            db.Events.Add(sampleEvent);
     }
+
+    if (db.ChangeTracker.HasChanges())
+        db.SaveChanges();
 }
 
 // Configure the HTTP request pipeline.
@@ -53,4 +93,4 @@ app.UseAuthorization();
 app.MapHub<ChatHub>("/hubs/chat");
 app.MapRazorPages();
 
-app.Run();
+app.Run(); // Binding to http://localhost:5144
