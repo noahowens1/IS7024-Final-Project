@@ -1,0 +1,112 @@
+@page
+@model CincyEvents.Pages.Chat.IndexModel
+@using System.Text.Json
+@{
+    ViewData["Title"] = $"Chat - {Model.Event.Name}";
+    var recipientId = ViewData["RecipientId"] as string;
+}
+
+<h1>@Model.Event.Name chat</h1>
+<div class="mb-3">
+    <label class="form-label" for="chatType">Conversation</label>
+    <select class="form-select" id="chatType" onchange="changeConversation(this.value)">
+        <option value="">Event group chat</option>
+        @foreach (var participant in Model.Participants)
+        {
+            @if (participant.Id == recipientId)
+            {
+                <option value="@participant.Id" selected>Message @participant.Name</option>
+            }
+            else
+            {
+                <option value="@participant.Id">Message @participant.Name</option>
+            }
+        }
+    </select>
+</div>
+
+<div id="messages" class="border rounded p-3 mb-3" style="min-height: 260px; max-height: 420px; overflow-y: auto;">
+    @foreach (var message in Model.Messages)
+    {
+        <p><strong>@(message.Sender.DisplayName ?? message.Sender.Email):</strong> @message.Content <small class="text-muted">(@message.SentAt.ToLocalTime().ToShortTimeString())</small></p>
+    }
+</div>
+<form id="messageForm" onsubmit="return false;">
+    <div class="input-group">
+        <input id="messageInput" class="form-control" maxlength="2000" placeholder="Write a message..." autocomplete="off" required />
+        <button class="btn btn-primary" type="submit">Send</button>
+    </div>
+</form>
+<div id="chatError" class="text-danger mt-2" role="alert"></div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@8.0.0/dist/browser/signalr.min.js"></script>
+    <script>
+        const eventId = @Model.Event.Id;
+        const currentUserId = @Html.Raw(JsonSerializer.Serialize(Model.CurrentUserId));
+        const messages = document.getElementById('messages');
+        const input = document.getElementById('messageInput');
+        const chatError = document.getElementById('chatError');
+        const recipient = () => document.getElementById('chatType').value || null;
+
+        if (typeof signalR === 'undefined') {
+            chatError.textContent = 'The chat client could not load. Refresh the page and try again.';
+        } else {
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl('/hubs/chat', { withCredentials: true })
+                .withAutomaticReconnect()
+                .build();
+
+            connection.on('ReceiveMessage', (senderId, senderName, content, sentAt) => {
+            const item = document.createElement('p');
+            const sender = document.createElement('strong');
+            sender.textContent = `${senderId === currentUserId ? 'You' : senderName}: `;
+            item.append(sender, document.createTextNode(content));
+            messages.appendChild(item);
+            messages.scrollTop = messages.scrollHeight;
+            });
+
+            document.getElementById('messageForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            if (!input.value.trim()) return;
+            try {
+                if (connection.state !== signalR.HubConnectionState.Connected) {
+                    chatError.textContent = 'The chat connection is not ready. Please wait a moment and try again.';
+                    return;
+                }
+                await connection.invoke('SendMessage', eventId, recipient(), input.value);
+                input.value = '';
+            } catch (error) {
+                chatError.textContent = error.message || 'The message could not be sent.';
+            }
+            });
+
+            connection.start()
+            .then(() => connection.invoke('JoinEventChat', eventId))
+            .catch(error => {
+                chatError.textContent = error.message || 'Unable to connect to the event chat.';
+            });
+
+            connection.onreconnecting(() => {
+            chatError.textContent = 'Reconnecting to the event chat...';
+            });
+
+            connection.onreconnected(() => {
+            chatError.textContent = '';
+            connection.invoke('JoinEventChat', eventId).catch(error => {
+                chatError.textContent = error.message || 'Unable to rejoin the event chat.';
+            });
+            });
+
+            connection.onclose(error => {
+            if (error)
+                chatError.textContent = error.message || 'The event chat connection was closed.';
+            });
+        }
+
+        function changeConversation(userId) {
+            const query = userId ? `&recipientId=${encodeURIComponent(userId)}` : '';
+            window.location = `/Chat?eventId=${eventId}${query}`;
+        }
+    </script>
+}
