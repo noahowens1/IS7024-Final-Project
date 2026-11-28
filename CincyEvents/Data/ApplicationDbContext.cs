@@ -31,6 +31,11 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasForeignKey(participant => participant.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.Entity<Event>()
+            .HasIndex(eventItem => new { eventItem.Source, eventItem.ExternalId })
+            .IsUnique()
+            .HasFilter("[Source] IS NOT NULL AND [ExternalId] IS NOT NULL");
+
         builder.Entity<ChatConversation>()
             .HasOne(conversation => conversation.FirstUser)
             .WithMany()

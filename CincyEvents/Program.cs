@@ -51,6 +51,30 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     db.Database.EnsureCreated();
 
+    if (db.Database.IsSqlServer())
+    {
+        db.Database.ExecuteSqlRaw("""
+            IF COL_LENGTH('dbo.Events', 'ExternalId') IS NULL
+                ALTER TABLE [dbo].[Events] ADD [ExternalId] nvarchar(450) NULL;
+            """);
+
+        db.Database.ExecuteSqlRaw("""
+            IF COL_LENGTH('dbo.Events', 'Source') IS NULL
+                ALTER TABLE [dbo].[Events] ADD [Source] nvarchar(450) NULL;
+            """);
+
+        db.Database.ExecuteSqlRaw("""
+            IF NOT EXISTS (
+                SELECT 1
+                FROM sys.indexes
+                WHERE name = N'IX_Events_Source_ExternalId'
+                    AND object_id = OBJECT_ID(N'[dbo].[Events]'))
+                CREATE UNIQUE INDEX [IX_Events_Source_ExternalId]
+                    ON [dbo].[Events] ([Source], [ExternalId])
+                    WHERE [Source] IS NOT NULL AND [ExternalId] IS NOT NULL;
+            """);
+    }
+
     if (db.ChangeTracker.HasChanges())
         db.SaveChanges();
 }

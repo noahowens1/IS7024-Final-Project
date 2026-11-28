@@ -248,6 +248,35 @@ else
                                 Source: @item.Source
                             </p>
 
+                            @if (Model.ConnectedEventKeys.Contains(
+                                Model.EventKey(item.Source, item.ExternalId)))
+                            {
+                                <a class="btn btn-primary w-100"
+                                   asp-page="/Chat/Index"
+                                   asp-route-eventId="@Model.ConnectedEventIds[Model.EventKey(item.Source, item.ExternalId)]">
+                                    Open chat
+                                </a>
+                            }
+                            else if (User.Identity?.IsAuthenticated == true)
+                            {
+                                <form method="post" asp-page-handler="Connect">
+                                    <input type="hidden" name="source" value="@item.Source" />
+                                    <input type="hidden" name="externalId" value="@item.ExternalId" />
+                                    <button type="submit" class="btn btn-outline-primary w-100">
+                                        Connect to event
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <a class="btn btn-outline-primary w-100"
+                                   asp-area="Identity"
+                                   asp-page="/Account/Login"
+                                   asp-route-returnUrl="@Request.Path@Request.QueryString">
+                                    Log in to connect
+                                </a>
+                            }
+
                             @if (Uri.TryCreate(item.EventUrl,
                                                 UriKind.Absolute, out var eventUri)
                                                 && eventUri.Scheme == Uri.UriSchemeHttps)
