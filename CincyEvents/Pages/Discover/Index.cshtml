@@ -1,0 +1,270 @@
+﻿@page
+@model CincyEvents.Pages.Discover.IndexModel
+
+@{
+    ViewData["Title"] = "Discover Events";
+}
+
+<h1 class="mb-3">Discover Cincinnati Events</h1>
+
+<p class="lead">
+    Explore upcoming events happening around Cincinnati.
+</p>
+
+<form method="get" class="mb-4 p-3 border rounded bg-light">
+    <div class="row align-items-end g-3">
+
+        <div class="col-md-3">
+            <label asp-for="StartDate" class="form-label">
+                Start Date
+            </label>
+            <input asp-for="StartDate" type="date"
+                   class="form-control" />
+        </div>
+
+        <div class="col-md-3">
+            <label asp-for="EndDate" class="form-label">
+                End Date
+            </label>
+            <input asp-for="EndDate" type="date"
+                   class="form-control" />
+        </div>
+
+        <div class="col-md-3">
+            <label asp-for="Location" class="form-label">
+                Location
+            </label>
+            <input asp-for="Location" type="text"
+                   class="form-control"
+                   placeholder="Search location" />
+        </div>
+
+        <div class="col-md-3">
+            <label asp-for="Category" class="form-label">
+                Category
+            </label>
+
+            <select asp-for="Category" class="form-select">
+                <option value="">All Categories</option>
+
+                @foreach (var category in Model.Categories)
+                {
+                    <option value="@category.Id">
+                        @category.Title
+                    </option>
+                }
+
+                <option value="uncategorized">
+                    Uncategorized
+                </option>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label asp-for="MaxBudget" class="form-label">
+                Maximum Budget ($)
+            </label>
+            <input asp-for="MaxBudget"
+                   type="number"
+                   min="0"
+                   step="0.01"
+                   class="form-control"
+                   placeholder="Enter budget" />
+        </div>
+
+        <div class="col-md-3">
+            <div class="form-check mb-2">
+                <input asp-for="FreeOnly"
+                       class="form-check-input" />
+                <label asp-for="FreeOnly"
+                       class="form-check-label">
+                    Free Events Only
+                </label>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">
+                Apply Filters
+            </button>
+
+            <a asp-page="/Discover/Index"
+               class="btn btn-outline-secondary">
+                Reset
+            </a>
+        </div>
+
+        <div class="col-12">
+            <small class="text-muted">
+                Events with unknown prices are excluded
+                when budget filters are applied.
+                Ticket prices and service charges are
+                subject to change.
+            </small>
+        </div>
+
+    </div>
+</form>
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">
+        @Model.ErrorMessage
+    </div>
+}
+else if (!Model.Events.Any())
+{
+    <div class="alert alert-info">
+        No upcoming events match your filters.
+    </div>
+}
+else
+{
+    <p class="text-muted">
+        @Model.Events.Count event(s) found
+    </p>
+
+    <div class="row g-4">
+        @foreach (var item in Model.Events)
+        {
+            var description = item.Description ?? string.Empty;
+
+            var shortDescription = description.Length > 180
+            ? description.Substring(0, 180) + "..."
+            : description;
+
+            var categoryName = Model.Categories
+            .FirstOrDefault(c => c.Id == item.Category)?.Title
+            ?? "Uncategorized";
+
+            <div class="col-sm-6 col-lg-4">
+                <div class="card h-100 shadow-sm overflow-hidden">
+
+                    @if (!string.IsNullOrWhiteSpace(item.ImageUrl)
+                                && Uri.TryCreate(item.ImageUrl,
+                                UriKind.Absolute, out var imageUri)
+                                && imageUri.Scheme == Uri.UriSchemeHttps)
+                    {
+                        <img src="@item.ImageUrl"
+                             class="card-img-top"
+                             alt="@item.Name"
+                             loading="lazy"
+                             style="height: 200px; object-fit: cover;" />
+                    }
+                    else
+                    {
+                        <div class="bg-light d-flex align-items-center justify-content-center"
+                             style="height: 200px;">
+                            <span class="text-muted">
+                                No image available
+                            </span>
+                        </div>
+                    }
+
+                    <div class="card-body d-flex flex-column">
+
+                        <div class="mb-2">
+                            <span class="badge bg-secondary">
+                                @categoryName
+                            </span>
+                        </div>
+
+                        <h5 class="card-title">
+                            @item.Name
+                        </h5>
+
+                        <p class="mb-2">
+                            <strong>Date:</strong>
+                            @item.StartsAt.ToString("MMM dd, yyyy - h:mm tt")
+                        </p>
+
+                        <p class="mb-2">
+                            <strong>Location:</strong>
+                            @item.Location
+                        </p>
+
+                        @if (!string.IsNullOrWhiteSpace(item.Address))
+                        {
+                            <p class="small text-muted mb-2">
+                                @item.Address
+                            </p>
+                        }
+
+                        <div class="mb-2">
+                            <strong>Price:</strong>
+
+                            @if (item.Price.HasValue
+                                                && item.Price.Value == 0
+                                                && (!item.MaxPrice.HasValue
+                                                || item.MaxPrice.Value == 0))
+                            {
+                                <span class="text-success fw-bold">
+                                    Free
+                                </span>
+                            }
+                            else if (item.Price.HasValue)
+                            {
+                                @if (item.MaxPrice.HasValue
+                                                    && item.MaxPrice.Value > item.Price.Value)
+                                {
+                                    <span class="fw-bold">
+                                        @item.Price.Value.ToString("C")
+                                        -
+                                        @item.MaxPrice.Value.ToString("C")
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="fw-bold">
+                                        @item.Price.Value.ToString("C")
+                                    </span>
+                                }
+
+                                @if (item.Source == "Memorial Hall"
+                                                    && (item.Price.Value > 0
+                                                    || item.MaxPrice.GetValueOrDefault() > 0))
+                                {
+                                    <div class="small text-muted">
+                                        Additional $4.00 service charge
+                                        per paid ticket.
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <span class="text-muted">
+                                    Check event details for pricing
+                                </span>
+                            }
+                        </div>
+
+                        <p class="card-text">
+                            @shortDescription
+                        </p>
+
+                        <div class="mt-auto">
+
+                            <p class="small text-muted mb-2">
+                                Source: @item.Source
+                            </p>
+
+                            @if (Uri.TryCreate(item.EventUrl,
+                                                UriKind.Absolute, out var eventUri)
+                                                && eventUri.Scheme == Uri.UriSchemeHttps)
+                            {
+                                <a href="@item.EventUrl"
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   class="btn btn-primary w-100">
+                                    View Event Details
+                                </a>
+                            }
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
