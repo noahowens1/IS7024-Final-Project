@@ -51,28 +51,6 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     db.Database.EnsureCreated();
 
-    var sampleEvents = new[]
-    {
-        new Event
-        {
-            Name = "Cincy Events Community Meetup",
-            Description = "Join this event to try the real-time event chat.",
-            StartsAt = DateTime.UtcNow.AddDays(7)
-        },
-        new Event
-        {
-            Name = "Cincinnati Food Truck Festival",
-            Description = "Connect with other attendees and share your favorite food trucks.",
-            StartsAt = DateTime.UtcNow.AddDays(14)
-        }
-    };
-
-    foreach (var sampleEvent in sampleEvents)
-    {
-        if (!db.Events.Any(eventItem => eventItem.Name == sampleEvent.Name))
-            db.Events.Add(sampleEvent);
-    }
-
     if (db.ChangeTracker.HasChanges())
         db.SaveChanges();
 }
