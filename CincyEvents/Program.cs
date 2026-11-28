@@ -1,8 +1,10 @@
 using CincyEvents.Data;
 using CincyEvents.Hubs;
 using CincyEvents.Models;
+using CincyEvents.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,7 +42,8 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 builder.Services.AddSignalR();
 builder.Services.AddRazorPages();
-
+builder.Services.AddHttpClient<EventDiscoveryService>();
+builder.Services.AddMemoryCache();
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
